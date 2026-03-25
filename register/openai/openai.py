@@ -21,7 +21,7 @@ from urllib.parse import urlparse, parse_qs, urlencode
 
 from curl_cffi import requests as curl_requests
 
-from register.base import ModelProvider, ModelProviderError
+from register.base import ModelProvider, ModelProviderError, random_name
 from util import config as config_utils
 from util import cpa as cpa_utils
 from util import get_logger, setup_logger
@@ -545,70 +545,6 @@ def _generate_password(length=14):
     pwd += [random.choice(all_chars) for _ in range(length - 4)]
     random.shuffle(pwd)
     return "".join(pwd)
-
-
-def _random_name():
-    first = random.choice(
-        [
-            "James",
-            "Emma",
-            "Liam",
-            "Olivia",
-            "Noah",
-            "Ava",
-            "Ethan",
-            "Sophia",
-            "Lucas",
-            "Mia",
-            "Mason",
-            "Isabella",
-            "Logan",
-            "Charlotte",
-            "Alexander",
-            "Amelia",
-            "Benjamin",
-            "Harper",
-            "William",
-            "Evelyn",
-            "Henry",
-            "Abigail",
-            "Sebastian",
-            "Emily",
-            "Jack",
-            "Elizabeth",
-        ]
-    )
-    last = random.choice(
-        [
-            "Smith",
-            "Johnson",
-            "Brown",
-            "Davis",
-            "Wilson",
-            "Moore",
-            "Taylor",
-            "Clark",
-            "Hall",
-            "Young",
-            "Anderson",
-            "Thomas",
-            "Jackson",
-            "White",
-            "Harris",
-            "Martin",
-            "Thompson",
-            "Garcia",
-            "Robinson",
-            "Lewis",
-            "Walker",
-            "Allen",
-            "King",
-            "Wright",
-            "Scott",
-            "Green",
-        ]
-    )
-    return f"{first} {last}"
 
 
 def _random_birthdate():
@@ -1741,7 +1677,7 @@ def _register_one(idx, total, proxy):
         reg._logger = get_logger(f"register:{reg.tag}")
 
         chatgpt_password = _generate_password()
-        name = _random_name()
+        name = random_name()
         birthdate = _random_birthdate()
 
         logger.info("[{}/{}] 开始注册: {}", idx, total, email)

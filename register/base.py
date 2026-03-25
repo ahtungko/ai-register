@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import random
 from typing import Optional
 
 
@@ -39,3 +40,67 @@ class ModelProvider(ABC):
         proxy: Optional[str] = None,
     ):
         """执行 provider 对应的注册流程。"""
+
+
+def random_name() -> str:
+    first = random.choice(
+        [
+            "James",
+            "Emma",
+            "Liam",
+            "Olivia",
+            "Noah",
+            "Ava",
+            "Ethan",
+            "Sophia",
+            "Lucas",
+            "Mia",
+            "Mason",
+            "Isabella",
+            "Logan",
+            "Charlotte",
+            "Alexander",
+            "Amelia",
+            "Benjamin",
+            "Harper",
+            "William",
+            "Evelyn",
+            "Henry",
+            "Abigail",
+            "Sebastian",
+            "Emily",
+            "Jack",
+            "Elizabeth",
+        ]
+    )
+    last = random.choice(
+        [
+            "Smith",
+            "Johnson",
+            "Brown",
+            "Davis",
+            "Wilson",
+            "Moore",
+            "Taylor",
+            "Clark",
+            "Hall",
+            "Young",
+            "Anderson",
+            "Thomas",
+            "Jackson",
+            "White",
+            "Harris",
+            "Martin",
+            "Thompson",
+            "Garcia",
+            "Robinson",
+            "Lewis",
+            "Walker",
+            "Allen",
+            "King",
+            "Wright",
+            "Scott",
+            "Green",
+        ]
+    )
+    return f"{first} {last}"

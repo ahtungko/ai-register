@@ -14,7 +14,7 @@ from typing import Optional
 from DrissionPage import Chromium, ChromiumOptions
 from DrissionPage.errors import PageDisconnectedError
 
-from register.base import ModelProvider
+from register.base import ModelProvider, random_name
 from util import config as config_utils
 from util import g2a as g2a_utils
 from util import get_logger, setup_logger
@@ -708,8 +708,9 @@ def wait_for_verification_code(
 
 
 def build_profile():
-    given_name = "Neo"
-    family_name = "Lin"
+    name = random_name().split(" ", 1)
+    given_name = name[0]
+    family_name = name[1] if len(name) > 1 else "Smith"
     password = "N" + secrets.token_hex(4) + "!a7#" + secrets.token_urlsafe(6)
     return given_name, family_name, password
 
