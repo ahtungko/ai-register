@@ -9,7 +9,8 @@
 - 并发批量执行
 - 可切换邮箱 provider
 - 支持 OpenAI OAuth 与 Grok provider 切换
-- 支持 CPA 上传
+- 支持 [CPA](https://github.com/router-for-me/CLIProxyAPI) 上传
+- 支持 [grok2ai](https://github.com/chenyme/grok2api) 上传
 
 ## 快速开始
 
@@ -69,13 +70,16 @@ python main.py
 | `token_dir` | token 输出目录                           |
 | `model_provider` | 模型 provider 名称（`openai` / `grok`） |
 | `model_providers.openai.*` | OpenAI OAuth 配置                      |
-| `model_providers.grok.*` | Grok 外部流程桥接配置                     |
+| `model_providers.grok.browser_proxy` | Grok 浏览器代理配置                    |
 | `mail_provider` | 邮箱 provider（`duckmail` / `tempmail`） |
 | `mail_providers.duckmail.*` | DuckMail 配置                          |
 | `mail_providers.tempmail.*` | TempMail 配置                          |
 | `cpa.enable` | 是否启用 CPA 上传                          |
 | `cpa.api_url` | CPA 上传接口地址                           |
 | `cpa.token` | CPA 登录 token                         |
+| `g2a.enable` | 是否启用 Grok2AI 上传                     |
+| `g2a.api_url` | Grok2AI 上传接口地址                      |
+| `g2a.token` | Grok2AI 登录 token                      |
 
 示例配置请参考 [config.example.yaml](config.example.yaml)。
 
@@ -92,15 +96,3 @@ python main.py
 - `CPA_ENABLE`
 - `CPA_API_URL`
 - `CPA_TOKEN`
-
-## 安全建议
-
-- 不要提交真实 `config.yaml`（含密钥）到仓库。
-- 建议只提交脱敏的 [config.example.yaml](config.example.yaml)。
-- 当 CPA 地址为本地地址（如 `localhost`）时，上传请求会自动绕过代理。
-
-## Grok 说明
-
-- `model_provider: grok` 时，会直接执行仓库内置的 Grok 注册流程。
-- Grok 流程会直接复用当前配置的 `mail_provider`。
-- Grok 输出的 `sso` 文件会写入 `token_dir/grok/`。

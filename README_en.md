@@ -2,14 +2,15 @@
 
 [中文](README.md) | English
 
-A lightweight batch registration tool with OpenAI and Grok flows, temporary mailbox OTP retrieval, and optional CPA upload.
+A lightweight batch registration tool with OpenAI and Grok flows, temporary mailbox OTP retrieval, and optional CPA/Grok2AI upload.
 
 ## Features
 
 - Concurrent batch execution
 - Switchable mail provider
 - OpenAI OAuth and Grok provider switching
-- CPA upload support
+- [CPA](https://github.com/router-for-me/CLIProxyAPI) upload support
+- [grok2ai](https://github.com/chenyme/grok2api) upload support
 
 ## Quick Start
 
@@ -40,6 +41,7 @@ Then fill in sensitive fields:
 - `mail_providers.duckmail.bearer`
 - `mail_providers.tempmail.api_key`
 - `cpa.token` (only required when CPA upload is enabled)
+- `g2a.token` (only required when Grok2AI upload is enabled)
 
 ### 3) Run
 
@@ -69,13 +71,16 @@ The actual flow is selected by `model_provider` in `config.yaml`.
 | `token_dir` | Token output directory |
 | `model_provider` | Model provider name (`openai` / `grok`) |
 | `model_providers.openai.*` | OpenAI OAuth configuration |
-| `model_providers.grok.*` | Grok external flow bridge settings |
+| `model_providers.grok.browser_proxy` | Grok browser proxy setting |
 | `mail_provider` | Mail provider (`duckmail` / `tempmail`) |
 | `mail_providers.duckmail.*` | DuckMail settings |
 | `mail_providers.tempmail.*` | TempMail settings |
 | `cpa.enable` | Enable CPA upload |
 | `cpa.api_url` | CPA upload endpoint |
 | `cpa.token` | CPA login token |
+| `g2a.enable` | Enable Grok2AI upload |
+| `g2a.api_url` | Grok2AI upload endpoint |
+| `g2a.token` | Grok2AI login token |
 
 See [config.example.yaml](config.example.yaml) for a complete example.
 
@@ -92,15 +97,3 @@ Supports overriding part of the config via environment variables. Common ones in
 - `CPA_ENABLE`
 - `CPA_API_URL`
 - `CPA_TOKEN`
-
-## Security Notes
-
-- Do not commit real `config.yaml` containing secrets.
-- Commit only sanitized example files such as [config.example.yaml](config.example.yaml).
-- If CPA endpoint points to local addresses (`localhost`, `127.0.0.1`), proxy is bypassed automatically.
-
-## Grok Notes
-
-- With `model_provider: grok`, the project runs the built-in Grok registration flow directly from this repository.
-- The Grok flow reuses the currently configured `mail_provider`.
-- Grok `sso` output is written to `token_dir/grok/`.
