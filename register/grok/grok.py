@@ -17,6 +17,7 @@ from DrissionPage.errors import PageDisconnectedError
 
 from register.base import ModelProvider
 from util import config as config_utils
+from util import cpa as cpa_utils
 from util import get_logger, setup_logger
 from util import mail as mail_utils
 
@@ -105,6 +106,8 @@ class GrokModelProvider(ModelProvider):
         output_path = _default_sso_file(config)
         logger.info("开始执行内置 Grok 注册流程: total={}", total_accounts)
         logger.info("SSO 输出文件: {}", output_path)
+        if cpa_utils.should_upload(config):
+            logger.warning("当前流程为 grok，暂不支持 CPA 上传，待接入 grok2ai")
         _run_loop(total_accounts=total_accounts, output_path=output_path)
 
 
@@ -118,7 +121,7 @@ def _get_provider_cfg():
 
 
 def _default_sso_file(config):
-    token_dir = str(config.get("token_dir") or "token_dir")
+    token_dir = os.path.expanduser(str(config.get("token_dir") or "token_dir"))
     root = (
         token_dir if os.path.isabs(token_dir) else os.path.join(os.getcwd(), token_dir)
     )

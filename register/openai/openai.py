@@ -509,7 +509,7 @@ def _save_codex_tokens(email: str, tokens: Optional[dict[str, Any]]):
     }
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    token_base = _token_base_dir()
+    token_base = os.path.expanduser(_token_base_dir())
     model_name = _model_provider_name()
     root_dir = (
         token_base if os.path.isabs(token_base) else os.path.join(base_dir, token_base)

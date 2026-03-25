@@ -1,5 +1,4 @@
 from util import config as config_utils
-from util import cpa as cpa_utils
 from util import get_logger, setup_logger
 from util import mail as mail_utils
 from util import model as model_utils
@@ -14,7 +13,6 @@ def main():
     mail_ok, mail_err = mail_utils.validate_mail_provider_config(config)
     model_info = model_utils.get_model_provider_info(config)
     model_ok, model_err = model_utils.validate_model_provider_config(config)
-    cpa_ok, cpa_msg = cpa_utils.validate_cpa_config(config)
 
     if not mail_ok:
         logger.warning(f"邮箱 provider 配置不完整: {mail_err}")
@@ -22,10 +20,6 @@ def main():
     if not model_ok:
         logger.warning(f"模型 provider 配置不完整: {model_err}")
         logger.warning("请检查 config.yaml 的 model_provider / providers 配置")
-    if not cpa_ok:
-        logger.warning(f"CPA 配置不完整: {cpa_msg}")
-    else:
-        logger.debug(f"CPA 配置检查: {cpa_msg}")
 
     logger.info(f"配置并发: {config['concurrency']}")
     logger.info(f"配置总数: {config['total_accounts']}")
