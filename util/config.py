@@ -10,7 +10,6 @@ REGISTER_CONFIG_DEFAULTS = {
     "model_provider": "openai",
     "model_providers": {
         "grok": {
-            "source_path": "",
             "browser_proxy": "",
             "api_endpoint": "",
             "api_token": "",
@@ -129,7 +128,6 @@ def load_register_config(config_path, logger=None):
 
     # 规范化 Model 配置: 结构为 model_providers.<provider>。
     if model_name == "grok":
-        model_cfg["source_path"] = str(model_cfg.get("source_path") or "").strip()
         model_cfg["browser_proxy"] = str(
             model_cfg.get("browser_proxy") or config.get("proxy") or ""
         ).strip()

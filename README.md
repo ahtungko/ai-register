@@ -101,6 +101,6 @@ python main.py
 
 ## Grok 说明
 
-- `model_provider: grok` 时，会桥接执行 `model_providers.grok.source_path` 指向的 Grok 注册脚本。
-- 当前 Grok 流程仅支持 `mail_provider: duckmail`。
+- `model_provider: grok` 时，会直接执行仓库内置的 Grok 注册流程。
+- Grok 流程会直接复用当前配置的 `mail_provider`。
 - Grok 输出的 `sso` 文件会写入 `token_dir/grok/`。

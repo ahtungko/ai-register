@@ -101,6 +101,6 @@ Supports overriding part of the config via environment variables. Common ones in
 
 ## Grok Notes
 
-- With `model_provider: grok`, the project bridges to the external Grok registration flow referenced by `model_providers.grok.source_path`.
-- The Grok flow currently supports only `mail_provider: duckmail`.
+- With `model_provider: grok`, the project runs the built-in Grok registration flow directly from this repository.
+- The Grok flow reuses the currently configured `mail_provider`.
 - Grok `sso` output is written to `token_dir/grok/`.
