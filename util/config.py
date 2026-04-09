@@ -25,7 +25,14 @@ REGISTER_CONFIG_DEFAULTS = {
         "duckmail": {
             "api_base": "https://api.duckmail.sbs",
             "bearer": "",
-        }
+        },
+        "apimail": {
+            "worker_url": "",
+            "domain": "",
+            "site_password": "",
+            "prefix": "",
+            "proxy": "",
+        },
     },
     "proxy": "",
     "token_dir": "token_dir",
@@ -58,6 +65,11 @@ REGISTER_ENV_KEY_MAPPING = {
     "model_oauth_client_id": "MODEL_OAUTH_CLIENT_ID",
     "model_oauth_redirect_uri": "MODEL_OAUTH_REDIRECT_URI",
     "token_dir": "TOKEN_DIR",
+    "apimail_worker_url": "APIMAIL_WORKER_URL",
+    "apimail_domain": "APIMAIL_DOMAIN",
+    "apimail_site_password": "APIMAIL_SITE_PASSWORD",
+    "apimail_prefix": "APIMAIL_PREFIX",
+    "apimail_proxy": "APIMAIL_PROXY",
     "cpa_enable": "CPA_ENABLE",
     "cpa_api_url": "CPA_API_URL",
     "cpa_token": "CPA_TOKEN",
@@ -124,6 +136,16 @@ def load_register_config(config_path, logger=None):
     )
     if not isinstance(config.get("mail_providers"), dict):
         config["mail_providers"] = {}
+
+    apimail_cfg = config["mail_providers"].get("apimail")
+    if not isinstance(apimail_cfg, dict):
+        apimail_cfg = {}
+    apimail_cfg["worker_url"] = str(config.get("apimail_worker_url") or apimail_cfg.get("worker_url") or "").strip()
+    apimail_cfg["domain"] = str(config.get("apimail_domain") or apimail_cfg.get("domain") or "").strip()
+    apimail_cfg["site_password"] = str(config.get("apimail_site_password") or apimail_cfg.get("site_password") or "").strip()
+    apimail_cfg["prefix"] = str(config.get("apimail_prefix") or apimail_cfg.get("prefix") or "").strip()
+    apimail_cfg["proxy"] = str(config.get("apimail_proxy") or apimail_cfg.get("proxy") or "").strip()
+    config["mail_providers"]["apimail"] = apimail_cfg
 
     config["model_provider"] = (
         str(config.get("model_provider", "openai")).strip().lower()

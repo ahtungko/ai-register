@@ -40,6 +40,7 @@ Then fill in sensitive fields:
 
 - `mail_providers.duckmail.bearer`
 - `mail_providers.tempmail.api_key`
+- `mail_providers.apimail.worker_url` / `mail_providers.apimail.domain`
 - `cpa.token` (only required when CPA upload is enabled)
 - `g2a.token` (only required when Grok2API upload is enabled)
 
@@ -72,9 +73,10 @@ The actual flow is selected by `model_provider` in `config.yaml`.
 | `model_provider` | Model provider name (`openai` / `grok`) |
 | `model_providers.openai.*` | OpenAI OAuth configuration              |
 | `model_providers.grok.browser_proxy` | Grok browser proxy setting              |
-| `mail_provider` | Mail provider (`duckmail` / `tempmail`) |
+| `mail_provider` | Mail provider (`duckmail` / `tempmail` / `apimail`) |
 | `mail_providers.duckmail.*` | DuckMail settings                       |
 | `mail_providers.tempmail.*` | TempMail settings                       |
+| `mail_providers.apimail.*` | ApiMail settings                        |
 | `cpa.enable` | Enable CPA upload                       |
 | `cpa.api_url` | CPA upload endpoint                     |
 | `cpa.token` | CPA login token                         |

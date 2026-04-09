@@ -1,4 +1,5 @@
 import argparse
+import atexit
 import datetime
 import os
 import platform
@@ -26,8 +27,10 @@ setup_logger()
 logger = get_logger("grok")
 
 _virtual_display = None
+_active_browser_count = 0
 _thread_state = threading.local()
 _file_lock = threading.Lock()
+_display_lock = threading.Lock()
 
 
 class _ThreadLocalObjectProxy:
@@ -305,18 +308,63 @@ def _ensure_virtual_display():
         logger.warning("Xvfb 启动失败: {}，将尝试直接运行", exc)
 
 
+def _acquire_browser_slot():
+    global _active_browser_count
+    with _display_lock:
+        _active_browser_count += 1
+
+
+def _release_browser_slot():
+    global _active_browser_count, _virtual_display
+    with _display_lock:
+        if _active_browser_count > 0:
+            _active_browser_count -= 1
+        if _active_browser_count != 0 or _virtual_display is None:
+            return
+        try:
+            _virtual_display.stop()
+            logger.info("Xvfb virtual display stopped")
+        except Exception as exc:
+            logger.warning("Xvfb stop failed: {}", exc)
+        finally:
+            _virtual_display = None
+
+
+def _cleanup_virtual_display():
+    global _active_browser_count, _virtual_display
+    with _display_lock:
+        _active_browser_count = 0
+        if _virtual_display is None:
+            return
+        try:
+            _virtual_display.stop()
+        except Exception:
+            pass
+        finally:
+            _virtual_display = None
+
+
+atexit.register(_cleanup_virtual_display)
+
+
 def start_browser():
     _ensure_virtual_display()
+    _acquire_browser_slot()
     co = _create_chromium_options()
     chrome_temp_dir = tempfile.mkdtemp(prefix="chrome_run_")
-    co.set_user_data_path(chrome_temp_dir)
-    browser_obj = Chromium(co)
-    tabs = browser_obj.get_tabs()
-    page_obj = tabs[-1] if tabs else browser_obj.new_tab()
-    _set_chrome_temp_dir(chrome_temp_dir)
-    _set_browser(browser_obj)
-    _set_page(page_obj)
-    return browser_obj, page_obj
+    try:
+        co.set_user_data_path(chrome_temp_dir)
+        browser_obj = Chromium(co)
+        tabs = browser_obj.get_tabs()
+        page_obj = tabs[-1] if tabs else browser_obj.new_tab()
+        _set_chrome_temp_dir(chrome_temp_dir)
+        _set_browser(browser_obj)
+        _set_page(page_obj)
+        return browser_obj, page_obj
+    except Exception:
+        shutil.rmtree(chrome_temp_dir, ignore_errors=True)
+        _release_browser_slot()
+        raise
 
 
 def stop_browser():
@@ -332,6 +380,7 @@ def stop_browser():
     if chrome_temp_dir and os.path.isdir(chrome_temp_dir):
         shutil.rmtree(chrome_temp_dir, ignore_errors=True)
     _set_chrome_temp_dir("")
+    _release_browser_slot()
 
 
 def restart_browser():

@@ -2,10 +2,12 @@ import re
 import time
 
 from util.providers.base import MailProviderError
+from util.providers.apimail import ApiMailProvider
 from util.providers.duckmail import DuckMailProvider
 from util.providers.tempmail import TempMailLolProvider
 
 _PROVIDER_REGISTRY = {
+    "apimail": ApiMailProvider,
     "duckmail": DuckMailProvider,
     "tempmail": TempMailLolProvider,
 }
@@ -67,6 +69,23 @@ def create_mail_provider(config, *, user_agent=None, proxy=None, impersonate="ch
             impersonate=impersonate,
         )
 
+    if provider_name == "apimail":
+        worker_url = str(provider_cfg.get("worker_url") or "").strip()
+        domain = str(provider_cfg.get("domain") or "").strip()
+        if not worker_url:
+            raise MailProviderError("mail_providers.apimail.worker_url is required")
+        if not domain:
+            raise MailProviderError("mail_providers.apimail.domain is required")
+        return provider_cls(
+            worker_url=worker_url,
+            domain=domain,
+            site_password=provider_cfg.get("site_password"),
+            prefix=provider_cfg.get("prefix"),
+            proxy=provider_cfg.get("proxy") or proxy,
+            user_agent=user_agent,
+            impersonate=impersonate,
+        )
+
     raise MailProviderError(f"provider 初始化未实现: {provider_name}")
 
 
@@ -82,6 +101,12 @@ def get_mail_provider_info(config):
         return {
             "name": provider_name,
             "api_base": "https://api.tempmail.lol/v2",
+        }
+
+    if provider_name == "apimail":
+        return {
+            "name": provider_name,
+            "api_base": str(provider_cfg.get("worker_url") or "").strip(),
         }
 
     return {"name": provider_name, "api_base": ""}

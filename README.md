@@ -40,6 +40,7 @@ cp config.example.yaml config.yaml
 
 - `mail_providers.duckmail.bearer`
 - `mail_providers.tempmail.api_key`
+- `mail_providers.apimail.worker_url` / `mail_providers.apimail.domain`
 - `cpa.token`（仅在启用 CPA 上传时需要）
 
 ### 3) 启动
