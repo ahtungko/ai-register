@@ -53,10 +53,12 @@ def upload_sso_tokens(tokens, config, proxy=None, logger=None):
         session.proxies = {"http": resolved_proxy, "https": resolved_proxy}
     elif proxy and logger:
         logger(f"[G2A] 检测到本地地址 {host}，上传请求已绕过代理")
+   
+    query_api_url = api_url[:-4] if api_url.endswith("/add") else api_url
 
     if append_mode:
         try:
-            get_resp = session.get(api_url, headers=headers, timeout=15, verify=False)
+            get_resp = session.get(query_api_url, headers=headers, timeout=15, verify=False)
             if get_resp.status_code == 200:
                 data = get_resp.json()
                 if isinstance(data, dict) and isinstance(data.get("tokens"), dict):
@@ -93,7 +95,10 @@ def upload_sso_tokens(tokens, config, proxy=None, logger=None):
     try:
         resp = session.post(
             api_url,
-            json={"ssoBasic": tokens_to_push},
+            json={
+                "pool": "auto",
+                "tokens": tokens_to_push,
+        },
             headers=headers,
             timeout=60,
             verify=False,

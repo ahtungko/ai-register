@@ -166,3 +166,7 @@ cython_debug/
 config.yaml
 
 token_dir
+apimail_standalone.py
+tests_test_apimail_standalone.py
+docs/superpowers/specs/2026-04-12-apimail-standalone-design.md
+docs/superpowers/plans/2026-04-12-apimail-standalone.md
